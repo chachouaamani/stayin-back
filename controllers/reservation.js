@@ -1,7 +1,9 @@
-var Reservation=require("../models/Reservation.js");
-var Appartement=require("../models/Appartement.js");
+var Reservation = require("../models/Reservation.js");
+var Appartement = require("../models/Appartement.js");
+var eventBus = require("../Events/eventBus.js");
+var events = require("../Events/events.js");
 const jwt = require('jsonwebtoken');
-var mongoose=require("mongoose");
+var mongoose = require("mongoose");
 
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 
@@ -9,100 +11,151 @@ const notifier = require('node-notifier');
 
 
 
- function getUserDataFromReq(req) {
-    return new Promise((resolve, reject) => {
-      jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
-        if (err) throw err;
-        resolve(userData);
-      });
+function getUserDataFromReq(req) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      resolve(userData);
     });
-  } 
+  });
+}
+/*
+ function getReservedDates(appartementId){
+  Appartement.findById(appartementId)
+  .then(appartement => {
+    
+    let reservedDates = appartement.reservedDates;
+   // console.log(reservedDates);
+    
+  })
+  .catch(err => {
+    console.error('Une erreur s\'est produite lors de la recherche de l\'appartement :', err);
+  });
+ 
+  return ("aaaa"+reservedDates);
+} */
+async function getReservedDates(appartementId) {
+
+  try {
+    const appartement = await Appartement.findById(appartementId);
+
+    var reservedDates = appartement.reservedDates;
+
+    //  console.log(reservedDates)
 
 
-  function isAvailable(apartmentId, checkIn, checkOut) {
-  /*   mongoose.connect(process.env.MONGO_URL); */
-    var reservedDates = Appartement.findById(apartmentId).reservedDates;  
-    const start = new Date(checkIn);
-    const end = new Date(checkOut);
-  
-    for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
-    //  const dateString = date.toISOString().substring(0, 10);
-      if (reservedDates.includes(date)) {
-        return false;
-      }
-    }
-    return true;
+    // console.log(typeof(reservedDates.toString()));
+    // Divise la chaîne en utilisant la virgule comme séparateur
+    /*   const str = reservedDates.toString();
+    
+      var  result = str.split(',');
+      result= result.map(date => new Date(date));
+      console.log(typeof(result)); */
+    return reservedDates;
+
+  } catch (err) {
+    console.error('Une erreur s\'est produite lors de la recherche de l\'appartement :', err);
+  }
+}
+
+
+function isInArray(array, value) {
+
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].getTime() == value.getTime())
+      return true;
   }
 
-const createReservation =  async (req, res) => {
-    mongoose.connect(process.env.MONGO_URL);
-   /*  const userData = await getUserDataFromReq(req); */
-    const {
-      appartement,checkIn,checkOut,numberOfGuests, name , phone, price,user,reserved
-    } = req.body;
-    if (isAvailable(appartement , checkIn, checkOut)){
-      for (let date = checkIn; date <= checkOut; date.setDate(date.getDate() + 1)) {
-      //  const dateString = date.toISOString().substring(0, 10);
-        reservedDates.push(date);
-        
-      }
-      Reservation.create({
-        appartement,checkIn,checkOut,numberOfGuests, name , phone, price,user,reservedDates,reserved
-      
-       /*  user:userData.id,  */
-      }).then((doc) => {
-        res.json(doc);
-        Appartement.findByIdAndUpdate('6452c936bf0a60e911de6a8c', { reserved: true } , reservedDates).then((appartement) => {
-          console.log('appartement réservée',appartement);
-        })
-          .catch((err) => {
-            console.error('Une erreur s\'est produite :', err);
-          });
-          
-          eventBus.Publish(
-            new events.ReservationCreatedEvent(
-               NewGUID(),
-                (new Date()).toISOString(),
-                NewGUID(),
-                appartement,
-                checkIn,
-                checkOut,
-                numberOfGuests,
-                name,
-                phone,
-                price,
-                user,
-                reservedDates,
-                reserved
-                 
-              )
-          )
-       
-      
-        
-      }).catch((err) => {
-        throw err;
-      });
-    }else {
-      console.log("reservation refus");
+  return false;
+}
+
+
+async function isAvailable(appartementId, checkIn, checkOut) {
+  var reservedDates = await getReservedDates(appartementId);
+  // console.log(reservedDates)
+  var checkIn = new Date(checkIn);
+  var checkOut = new Date(checkOut);
+
+  var isAvailable = true;
+
+  while (checkIn <= checkOut && isAvailable) {
+    if (isInArray(reservedDates, checkIn)) {
+      isAvailable = false;
+    } else {
+      checkIn.setDate(checkIn.getDate() + 1);
     }
+  }
+
+  return isAvailable;
+
+
+}
+
+const createReservation = async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+
+  const { appartement, checkIn, checkOut, numberOfGuests, name, phone, price, user, reserved } = req.body;
+  // console.log(appartement);
+  // console.log(checkIn);
+  // console.log(checkOut);
+  // console.log(isAvailable(appartement, checkIn, checkOut))
+  if (await isAvailable(appartement, checkIn, checkOut)) {
+
+    var reservedDates = await getReservedDates(appartement);
+    console.log("reservedDates")
+    console.log(reservedDates)
+
+    // var reservedDates = appartement.reservedDates;
+
+    const checkInn = new Date(Date.parse(checkIn));
+    const checkOutt = new Date(Date.parse(checkOut));
+
+    /* for (let date = checkIn; date <= checkOut; date.setDate(date.getDate() + 1)) {
+      var reservedDates = reservedDates.push(date);
+
+    } */
+
+    while (checkInn <= checkOutt) {
+      reservedDates.push(new Date(Date.parse(checkInn)));
+      checkInn.setDate(checkInn.getDate() + 1);
+    }
+    console.log('dates  ', reservedDates);
     
-  };
+    try {
+
+      var doc = await Reservation.create({
+        appartement, checkIn, checkOut, numberOfGuests, name, phone, price, user, reserved
+      });
+      await res.json(doc);
+      var result = await Appartement.findByIdAndUpdate(appartement, { reserved: true,reservedDates: reservedDates});
+
+      console.log('appartement réservée', result);
+
+    } catch (err) {
+
+      console.error('Une erreur s\'est produite :', err);
+    }
+  }
+  else
+    console.log("reservation refus");
+}
+
+//   }
+// };
+
+
+
+const getReservations = async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  // const userData = await getUserDataFromReq(req); 
+
+  res.json(await Reservation.find());
+};
 
 
 
 
 
-const getReservations =  async (req,res) => {
-    mongoose.connect(process.env.MONGO_URL);
-  /*  const userData = await getUserDataFromReq(req); */
-    
-    res.json( await Reservation.find());
-  };
-  
+module.exports.createReservation = createReservation;
+module.exports.getReservations = getReservations;
 
-
-
-
-module.exports.createReservation=createReservation;
- module.exports.getReservations=getReservations;

@@ -13,7 +13,9 @@ const AppartementSchema = new mongoose.Schema({
     checkOut: Number,
     maxGuests: Number,
     price: Number,
-    reservedDates:[Date],
+    reservedDates:[{
+        type:Date,
+        default:null}],
     reserved: {type: Boolean , default:false},
 }
 );

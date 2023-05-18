@@ -9,6 +9,6 @@ router.post("/reservation/createReservation" , controller.createReservation);
 //GET ALL 
  router.get("/reservation/getReservations/" , controller.getReservations); 
 
-
+ 
 //export default router;
 module.exports=router;
