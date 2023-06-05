@@ -2,15 +2,15 @@ const User = require('../models/User');
 
 module.exports = io => {
   io.on('connection', socket => {
-    console.log('User has connect');
+    // console.log('User has connect');
     socket.on('disconnect', _ => {
-      console.log('User disconnected');
+      // console.log('User disconnected');
       socket.emit('user-disconnect');
       socket.disconnect();
     });
 
     socket.on('user-login', uid => {
-      console.log('user-login : ', uid);
+      // console.log('user-login : ', uid);
       User.findById(uid).exec((err, user) => {
         if (user) {
           user.isOnline = true;
@@ -20,7 +20,7 @@ module.exports = io => {
     });
 
     socket.on('user-setOffline', uid => {
-      console.log('user-offline : ', uid);
+      // console.log('user-offline : ', uid);
       User.findById(uid).exec((err, user) => {
         if (user) {
           user.isOnline = false;
@@ -30,7 +30,7 @@ module.exports = io => {
     });
 
     socket.on('user-join-room', ({ roomId }) => {
-      console.log(`A user joined chat-${roomId}`);
+      // console.log(`A user joined chat-${roomId}`);
       socket.join(`chat-${roomId}`);
     });
 
@@ -50,7 +50,7 @@ module.exports = io => {
     });
 
     socket.on('new-conversation', ({ conversation, createId }) => {
-      console.log('a client create a new conversation');
+      // console.log('a client create a new conversation');
       const otherId =
         conversation.firstId === createId
           ? conversation.secondId

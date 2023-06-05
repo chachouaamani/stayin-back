@@ -36,31 +36,31 @@ dotenv.config()
 const connect = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URL);
-        console.log("connected to mongoDB.")
+        // console.log("connected to mongoDB.")
     } catch (error) {
         throw error
     }
 };
 
 mongoose.connection.on("disconnected", () => {
-    console.log("mongoDB disconnected")
+    // console.log("mongoDB disconnected")
 })
 
 //middlewares
 
-app.use(cors({
+/* app.use(cors({
     credentials: true,
     origin: 'http://localhost:3000',
     CORS: "AllowAll",
 }));
-
+ */
 app.use(express.json())
 app.use(cookieParser());
 
 app.use("/ms-reservation", reservationRoute);
-app.use("/ms-reservation", userRoute);
-app.use("/ms-reservation", appartementRoute);
-app.use("/ms-reservation", appartementEventRoute);
+app.use("/", userRoute);
+app.use("/", appartementRoute);
+app.use("/", appartementEventRoute);
 
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;

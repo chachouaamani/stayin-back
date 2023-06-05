@@ -34,7 +34,7 @@ async function GetAllEvents() {
 }
 
 function InsertUser(userInfo){
-    console.log(userInfo);
+    // console.log(userInfo);
 } 
 
 
