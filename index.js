@@ -4,48 +4,63 @@ var mongoose = require("mongoose");
 var reservationRoute = require("./routes/reservations.js");
 var userRoute = require("./routes/user.js");
 var appartementRoute = require("./routes/appartement.js");
+var appartementEventRoute = require("./routes/appartementEvent.js");
+//var db=require("./Events/database.js");
 
-var db = require("./Events/database.js");
+var appartementEvent = require("./controllers/appartementEvent.js");
 var events = require("./Events/events.js");
 var eventBus = require("./Events/eventBus.js");
-
-
+var app = express();
+//const server = require('http').createServer(app);
+//const io = require('socket.io');
+//const Message = require('./models/Message');
+ server = require('http').createServer(app) 
+ /*
+const io = require('socket.io')(server, { 
+  cors: { 
+    origin: "http://localhost:3000", 
+    methods: ["GET", "POST"] 
+  } 
+});  */
+ 
+server.listen(8800)
 
 const cors = require("cors");
 
 const cookieParser = require('cookie-parser');
 
-var app = express();
+const usersArray = [];
 
 dotenv.config()
 
 const connect = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URL);
-        console.log("connected to mongoDB.")
+        // console.log("connected to mongoDB.")
     } catch (error) {
         throw error
     }
 };
 
 mongoose.connection.on("disconnected", () => {
-    console.log("mongoDB disconnected")
+    // console.log("mongoDB disconnected")
 })
 
 //middlewares
 
-app.use(cors({
+/* app.use(cors({
     credentials: true,
     origin: 'http://localhost:3000',
     CORS: "AllowAll",
 }));
-
+ */
 app.use(express.json())
 app.use(cookieParser());
 
 app.use("/ms-reservation", reservationRoute);
-app.use("/ms-reservation", userRoute);
-app.use("/ms-reservation", appartementRoute);
+app.use("/", userRoute);
+app.use("/", appartementRoute);
+app.use("/", appartementEventRoute);
 
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;
@@ -65,15 +80,18 @@ async function ReadNewEvents() {
     
     for (let i = 0; i < newEvents.length; i++) {
         const message = newEvents[i];
-        if(message.Type == "UserCreatedEvent")
-        db.InsertUser(message.body);
+     /*    if(message.Type == "UserCreatedEvent")
+        db.InsertUser(message.body); */
+        if(message.Type == "AppartementCreatedEvent")
+        await appartementEvent.InsertEventAppartement(message.body); 
       
     }
 }
 
+
 setInterval(ReadNewEvents, 5000);
 
-app.listen(8800, () => {
+/* app.listen(8800, () => {
     connect()
     console.log("connected to backend")
-})
+}) */

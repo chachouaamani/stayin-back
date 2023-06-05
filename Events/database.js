@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
 
+const mongoose= require("mongoose");
 const connectionString = "mongodb+srv://amani_ch:amani217@cluster0.jje24xc.mongodb.net/ms-reservation";
 const eventTableName = "events"
 
@@ -8,7 +8,12 @@ const eventSchema = mongoose.Schema({
     PublishedTime: String
 });
 
+
+
 const Event = mongoose.model(eventTableName, eventSchema);
+
+
+
 
 
 async function InsertEvent(newEvent) {
@@ -19,6 +24,9 @@ async function InsertEvent(newEvent) {
     await eve.save();
 }
 
+
+
+
 async function GetAllEvents() {
     await mongoose.connect(connectionString);
 
@@ -26,10 +34,12 @@ async function GetAllEvents() {
 }
 
 function InsertUser(userInfo){
-    console.log(userInfo);
+    // console.log(userInfo);
 } 
 
 
-module.exports.GetAllEvents=GetAllEvents;
+module.exports.GetAllEvents= GetAllEvents ;
 module.exports.InsertEvent=InsertEvent;
 module.exports.InsertUser=InsertUser;
+
+

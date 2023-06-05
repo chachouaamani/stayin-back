@@ -71,8 +71,8 @@ class UserCreatedEvent extends BaseEvent {
     }
 }
 
-class ReservationCreatedEvent extends BaseEvent {
-    constructor(eventId, publishedTime, appartement, user, checkIn, checkOut, name, phone, price) {
+class ReservationCreatedEvent extends BaseEvent{
+    constructor(eventId, publishedTime, _id, appartement , user,checkIn, checkOut,numberOfGuests, name , phone, email , price , reservedDates) {
 
         // Call base constructor
         super(eventId, publishedTime);
@@ -88,14 +88,17 @@ class ReservationCreatedEvent extends BaseEvent {
 
         if (IsEmpty(checkOut))
             throw Error("ERROR: Empty field");
-
-        this.appartement = appartement;
-        this.user = user;
-        this.checkIn = checkIn;
-        this.checkOut = checkOut;
-        this.name = name;
-        this.phone = phone;
-        this.price = price;
+       this._id=_id;
+       this.appartement=appartement;
+       this.user=user;
+       this.checkIn=checkIn;
+       this.checkOut=checkOut;
+       this. numberOfGuests=numberOfGuests;
+       this.name=name;
+       this.phone=phone;
+       this.email=email;
+       this.price=price;
+       this.reservedDates=reservedDates;
     }
 
     Handle() {
@@ -106,6 +109,6 @@ class ReservationCreatedEvent extends BaseEvent {
 }
 
 
-module.exports.BaseEvent = BaseEvent;
-module.exports.UserCreatedEvent = UserCreatedEvent;
-module.exports.ReservationCreatedEvent = ReservationCreatedEvent;
+module.exports.BaseEvent=BaseEvent;
+module.exports.UserCreatedEvent=UserCreatedEvent;
+module.exports.ReservationCreatedEvent=ReservationCreatedEvent;
