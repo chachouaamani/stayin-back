@@ -4,18 +4,32 @@ var mongoose = require("mongoose");
 var reservationRoute = require("./routes/reservations.js");
 var userRoute = require("./routes/user.js");
 var appartementRoute = require("./routes/appartement.js");
+var appartementEventRoute = require("./routes/appartementEvent.js");
+//var db=require("./Events/database.js");
 
-var db = require("./Events/database.js");
+var appartementEvent = require("./controllers/appartementEvent.js");
 var events = require("./Events/events.js");
 var eventBus = require("./Events/eventBus.js");
-
-
+var app = express();
+//const server = require('http').createServer(app);
+//const io = require('socket.io');
+//const Message = require('./models/Message');
+ server = require('http').createServer(app) 
+ /*
+const io = require('socket.io')(server, { 
+  cors: { 
+    origin: "http://localhost:3000", 
+    methods: ["GET", "POST"] 
+  } 
+});  */
+ 
+server.listen(8800)
 
 const cors = require("cors");
 
 const cookieParser = require('cookie-parser');
 
-var app = express();
+const usersArray = [];
 
 dotenv.config()
 
@@ -46,6 +60,7 @@ app.use(cookieParser());
 app.use("/ms-reservation", reservationRoute);
 app.use("/ms-reservation", userRoute);
 app.use("/ms-reservation", appartementRoute);
+app.use("/ms-reservation", appartementEventRoute);
 
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;
@@ -65,15 +80,18 @@ async function ReadNewEvents() {
     
     for (let i = 0; i < newEvents.length; i++) {
         const message = newEvents[i];
-        if(message.Type == "UserCreatedEvent")
-        db.InsertUser(message.body);
+     /*    if(message.Type == "UserCreatedEvent")
+        db.InsertUser(message.body); */
+        if(message.Type == "AppartementCreatedEvent")
+        await appartementEvent.InsertEventAppartement(message.body); 
       
     }
 }
 
+
 setInterval(ReadNewEvents, 5000);
 
-app.listen(8800, () => {
+/* app.listen(8800, () => {
     connect()
     console.log("connected to backend")
-})
+}) */

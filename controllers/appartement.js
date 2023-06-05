@@ -1,5 +1,5 @@
 
-var Appartement=require("../models/Appartement.js");
+const Appartement= require("../models/Appartement.js");
 const jwt = require('jsonwebtoken');
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 var mongoose=require("mongoose");
@@ -26,7 +26,7 @@ const createAppartement =  (req,res) => {
   const places= async (req,res) => {
     mongoose.connect(process.env.MONGO_URL);
     const {id} = req.params;
-    res.json(await Place.findById(id).populate('appartement'));
+    res.json(await Appartement.findById(id));
   };
 
   module.exports.createAppartement=createAppartement;

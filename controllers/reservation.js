@@ -4,12 +4,32 @@ var eventBus = require("../Events/eventBus.js");
 var events = require("../Events/events.js");
 const jwt = require('jsonwebtoken');
 var mongoose = require("mongoose");
-
+const db=require("../Events/database.js")
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
-
+const AppartementEvent = require("../models/AppartementEvent.js");
 const notifier = require('node-notifier');
 
+/* var express = require("express");
+var app = express();
 
+
+server = require('http').createServer(app)  
+ 
+const io = require('socket.io')(server, { 
+  cors: { 
+    origin: "http://localhost:3000", 
+    methods: ["GET", "POST"] 
+  } 
+});  */
+
+
+function NewGUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+  });
+}
 
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
@@ -37,22 +57,13 @@ function getUserDataFromReq(req) {
 async function getReservedDates(appartementId) {
 
   try {
-    const appartement = await Appartement.findById(appartementId);
-
-    var reservedDates = appartement.reservedDates;
-
-    //  console.log(reservedDates)
-
-
-    // console.log(typeof(reservedDates.toString()));
-    // Divise la chaîne en utilisant la virgule comme séparateur
-    /*   const str = reservedDates.toString();
+    const appartement = await AppartementEvent.findOne({idAppartement : appartementId});
+    //const appartement = await AppartementEvent.findById(appartementId);
     
-      var  result = str.split(',');
-      result= result.map(date => new Date(date));
-      console.log(typeof(result)); */
+    var reservedDates = appartement.reservedDates;
+    console.log(reservedDates)
     return reservedDates;
-
+    
   } catch (err) {
     console.error('Une erreur s\'est produite lors de la recherche de l\'appartement :', err);
   }
@@ -68,6 +79,7 @@ function isInArray(array, value) {
 
   return false;
 }
+
 
 
 async function isAvailable(appartementId, checkIn, checkOut) {
@@ -93,27 +105,18 @@ async function isAvailable(appartementId, checkIn, checkOut) {
 
 const createReservation = async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
+  const {id} = req.params;
+  console.log(reservedDates)
+  const {   checkIn, checkOut, numberOfGuests, name, phone,email, price, user, reserved } = req.body;
+ 
+  if (await isAvailable(id, checkIn, checkOut)) {
+    
+     var reservedDates = await getReservedDates(id);
+     console.log(reservedDates)
+     const checkInn = new Date(Date.parse(checkIn));
+     const checkOutt = new Date(Date.parse(checkOut));
 
-  const { appartement, checkIn, checkOut, numberOfGuests, name, phone, price, user, reserved } = req.body;
-  // console.log(appartement);
-  // console.log(checkIn);
-  // console.log(checkOut);
-  // console.log(isAvailable(appartement, checkIn, checkOut))
-  if (await isAvailable(appartement, checkIn, checkOut)) {
 
-    var reservedDates = await getReservedDates(appartement);
-    console.log("reservedDates")
-    console.log(reservedDates)
-
-    // var reservedDates = appartement.reservedDates;
-
-    const checkInn = new Date(Date.parse(checkIn));
-    const checkOutt = new Date(Date.parse(checkOut));
-
-    /* for (let date = checkIn; date <= checkOut; date.setDate(date.getDate() + 1)) {
-      var reservedDates = reservedDates.push(date);
-
-    } */
 
     while (checkInn <= checkOutt) {
       reservedDates.push(new Date(Date.parse(checkInn)));
@@ -124,12 +127,46 @@ const createReservation = async (req, res) => {
     try {
 
       var doc = await Reservation.create({
-        appartement, checkIn, checkOut, numberOfGuests, name, phone, price, user, reserved
+       id, checkIn, checkOut, numberOfGuests, name, phone , email, price, user, reserved 
       });
       await res.json(doc);
-      var result = await Appartement.findByIdAndUpdate(appartement, { reserved: true,reservedDates: reservedDates});
+      var result = await AppartementEvent.findOneAndUpdate({idAppartement : id} , { reserved: true, reservedDates: reservedDates});
 
       console.log('appartement réservée', result);
+
+      io.on('connection', (socket) => { 
+        console.log("socket id: " + socket.id); 
+       
+        const specificClient = user; // Replace with the specific client's socket ID
+        socket.to(specificClient).emit('customEvent', 'Hello specific client!' );
+
+        socket.on('disconnect', () => { 
+          console.log('A user disconnected'); 
+        }); 
+        });
+       
+      
+    
+
+      eventBus.Publish(
+        new events.ReservationCreatedEvent(
+            NewGUID(),
+            (new Date()).toISOString(),
+            doc._id,
+            id,
+            user,
+            checkIn,
+            checkOut,
+            numberOfGuests,
+            name,
+            phone,
+            email,
+            price,
+            reservedDates
+             
+          )
+      )
+   
 
     } catch (err) {
 
@@ -138,6 +175,7 @@ const createReservation = async (req, res) => {
   }
   else
     console.log("reservation refus");
+  
 }
 
 //   }
@@ -152,10 +190,12 @@ const getReservations = async (req, res) => {
   res.json(await Reservation.find());
 };
 
+  
 
 
 
 
 module.exports.createReservation = createReservation;
 module.exports.getReservations = getReservations;
+
 

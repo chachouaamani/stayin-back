@@ -88,6 +88,7 @@ async function GetNewEvents() {
                 Type: message.properties.type,
                 body: JSON.parse(message.content.toString())
             };
+          
             
             // Add the message to the list of new messages
             messages.push(toInsert);
