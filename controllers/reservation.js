@@ -4,6 +4,7 @@ var eventBus = require("../Events/eventBus.js");
 var events = require("../Events/events.js");
 const jwt = require('jsonwebtoken');
 var mongoose = require("mongoose");
+const fetch = require('node-fetch');
 
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 
@@ -124,12 +125,44 @@ const createReservation = async (req, res) => {
     try {
 
       var doc = await Reservation.create({
-        appartement, checkIn, checkOut, numberOfGuests, name, phone, price, user, reserved
+        appartement, checkIn, checkOut, numberOfGuests, name, phone, price, user, reserved,pending
       });
       await res.json(doc);
       var result = await Appartement.findByIdAndUpdate(appartement, { reserved: true,reservedDates: reservedDates});
 
       console.log('appartement réservée', result);
+
+
+    //send create order
+
+      //hado kaml ytbdlo 
+    //when user click cancel
+    var cancelUrl="http://localhost:3000/";
+    //return when user click pay
+    var returnUrl="http://localhost:3000/";
+
+    var paymentBody = {
+      ReservationId: doc._id,
+      Amount: price,
+      CurrencyCode: "USD",
+      PaymentDate: new Date(),
+      CancelUrl: cancelUrl,
+      ReturnUrl: returnUrl,
+    }
+    ///hada mb3d nbdloh fih l address ta3 l payment 
+    var host = "http://localhost:5001/create/order"
+    var result = await fetch(host,{
+      method:'Post',
+      body: JSON.stringify(paymentBody),
+      headers:{"Content-Type":"application/json"}
+
+    });
+    var paymentResult = await result.json();
+      console.log('Payment result:', paymentResult);
+
+      await res.json(doc);
+
+
 
     } catch (err) {
 
@@ -138,6 +171,7 @@ const createReservation = async (req, res) => {
   }
   else
     console.log("reservation refus");
+  
 }
 
 //   }
