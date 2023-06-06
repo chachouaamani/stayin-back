@@ -9,7 +9,7 @@ const RservationSchema = new mongoose.Schema({
   name: {type:String, required:true},
   phone: {type:String, required:true},
   price: Number,
- // pending:Boolean,
+  pending:{type:Boolean , default:true},
 },
  {timestamps:true}
 );
