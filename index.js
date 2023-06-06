@@ -71,7 +71,7 @@ app.post("/reservation/createReservation/:id" , controllerr.createReservation);
 //GET ALL 
 app.get("/reservation/getReservations/" , controllerr.getReservations); 
 
-app.get("/reservation/getUserWithBooking" , controller.getBookingsByUser);
+app.get("/reservation/getUserWithBooking" , controllerr.getBookingsByUser);
 
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;

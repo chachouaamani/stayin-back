@@ -5,7 +5,7 @@ var events = require("../Events/events.js");
 const jwt = require('jsonwebtoken');
 var mongoose = require("mongoose");
 const db=require("../Events/database.js")
-const fetch = require('node-fetch');
+
 
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 const AppartementEvent = require("../models/AppartementEvent.js");
@@ -112,7 +112,7 @@ const createReservation = async (req, res) => {
   const {id} = req.params;
  // console.log(reservedDates)
   const {   checkIn, checkOut, numberOfGuests, name, phone,email, price, user, reserved } = req.body;
- 
+    console.log(user)
   if (await isAvailable(id, checkIn, checkOut)) {
     
      var reservedDates = await getReservedDates(id);
