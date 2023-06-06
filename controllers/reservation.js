@@ -1,5 +1,4 @@
 var Reservation = require("../models/Reservation.js");
-var Appartement = require("../models/Appartement.js");
 var eventBus = require("../Events/eventBus.js");
 var events = require("../Events/events.js");
 const jwt = require('jsonwebtoken');
@@ -9,7 +8,7 @@ const db = require("../Events/database.js")
 
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 const AppartementEvent = require("../models/AppartementEvent.js");
-const notifier = require('node-notifier');
+const Notification = require("../models/Notification.js");
 
 /* var express = require("express");
 var app = express();
@@ -158,6 +157,15 @@ const createReservation = async (req, res) => {
 
 
 
+      // Create notification and store it in the database
+
+      const notif = await Notification.create({
+        id_reservation: doc._id,
+        id_user: user,
+        message: "New reservation created: " + result.title,
+        not_read: true,
+      })
+
       eventBus.Publish(
         new events.ReservationCreatedEvent(
           NewGUID(),
@@ -178,34 +186,34 @@ const createReservation = async (req, res) => {
       )
 
 
-    //   //send create order
+    //send create order
 
-    //   //hado kaml ytbdlo 
-    //   //when user click cancel
-    //   var cancelUrl = "http://localhost:3000/";
-    //   //return when user click pay
-    //   var returnUrl = "http://localhost:3000/";
+      //hado kaml ytbdlo 
+    //when user click cancel
+    var cancelUrl="http://localhost:3000/";
+    //return when user click pay
+    var returnUrl="http://localhost:3000/";
 
-    //   var paymentBody = {
-    //     ReservationId: doc._id,
-    //     Amount: doc.price,
-    //     CurrencyCode: "USD",
-    //     PaymentDate: new Date(),
-    //     CancelUrl: cancelUrl,
-    //     ReturnUrl: returnUrl,
-    //   }
-    //   ///hada mb3d nbdloh fih l address ta3 l payment 
-    //   var host = "http://localhost:5001/create/order"
-    //   /*  var result = await fetch(host,{
-    //      method:'Post',
-    //      body: JSON.stringify(paymentBody),
-    //      headers:{"Content-Type":"application/json"}
-   
-    //    });
-    //    var paymentResult = await result.json();
-    //      console.log('Payment result:', paymentResult);
-    // */
-    //   await res.json(doc);
+    var paymentBody = {
+      ReservationId: doc._id,
+      Amount: doc.price,
+      CurrencyCode: "USD",
+      PaymentDate: new Date(),
+      CancelUrl: cancelUrl,
+      ReturnUrl: returnUrl,
+    }
+    ///hada mb3d nbdloh fih l address ta3 l payment 
+    var host = "http://localhost:5001/create/order"
+   /*  var result = await fetch(host,{
+      method:'Post',
+      body: JSON.stringify(paymentBody),
+      headers:{"Content-Type":"application/json"}
+
+    });
+    var paymentResult = await result.json();
+      console.log('Payment result:', paymentResult);
+ */
+      await res.json(doc);
 
 
 
@@ -235,16 +243,20 @@ const getReservations = async (req, res) => {
 
 const getBookingsByUser = async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
+  
+  const {user} = req.params;
 
-  const { user } = req.params;
-
-  res.json(await Reservation.find({ user: user }))
+  res.json( await Reservation.find({user:user}))
 }
 
-
+const setReservationRead = async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const id = req.params.id;
+  var not = await Notification.findByIdAndUpdate(id, { not_read: false })
+  res.json(not)
+}
 
 module.exports.createReservation = createReservation;
 module.exports.getReservations = getReservations;
-module.exports.getBookingsByUser = getBookingsByUser;
-module.exports.validateReservation = validateReservation;
+module.exports.getBookingsByUser= getBookingsByUser;
 
