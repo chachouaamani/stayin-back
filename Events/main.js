@@ -19,7 +19,7 @@ function NewGUID() {
     // Insert events to the database
 
     await db.InsertEvent(event);
-     console.log(await db.GetAllEvents())
+    //  console.log(await db.GetAllEvents())
 
    // Publish a message to the queue
      await eventBus.Publish(event);
@@ -41,7 +41,7 @@ function NewGUID() {
 
     // Read new messages from the queue (messages that have not yet been consumed)
     var messages = await eventBus.GetNewEvents();
-    console.log(messages);
+    // console.log(messages);
 
 })()
 

@@ -5,7 +5,7 @@ var controller = require("../controllers/reservation.js");
 
 const router=express.Router();
 
-//CREATE
+//CREATE     
 router.post("/reservation/createReservation/:id" , controller.createReservation);
 //GET ALL 
 router.get("/reservation/getReservations/" , controller.getReservations); 

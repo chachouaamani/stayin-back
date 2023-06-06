@@ -5,6 +5,7 @@ var events = require("../Events/events.js");
 const jwt = require('jsonwebtoken');
 var mongoose = require("mongoose");
 const db=require("../Events/database.js")
+const fetch = require('node-fetch');
 
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 const AppartementEvent = require("../models/AppartementEvent.js");
@@ -62,7 +63,7 @@ async function getReservedDates(appartementId) {
     //const appartement = await AppartementEvent.findById(appartementId);
     
     var reservedDates = appartement.reservedDates;
-    console.log(reservedDates)
+    // console.log(reservedDates)
     return reservedDates;
     
   } catch (err) {
@@ -105,6 +106,8 @@ async function isAvailable(appartementId, checkIn, checkOut) {
 }
 
 const createReservation = async (req, res) => {
+  console.log("we are creating reservation")
+   return
   mongoose.connect(process.env.MONGO_URL);
   const {id} = req.params;
   console.log(reservedDates)
@@ -128,7 +131,7 @@ const createReservation = async (req, res) => {
     try {
 
       var doc = await Reservation.create({
-        appartement, checkIn, checkOut, numberOfGuests, name, phone, price, user, reserved,pending
+       id, checkIn, checkOut, numberOfGuests, name, phone, price, user, reserved
       });
       await res.json(doc);
       var result = await AppartementEvent.findOneAndUpdate({idAppartement : id} , { reserved: true, reservedDates: reservedDates});
@@ -187,7 +190,7 @@ const createReservation = async (req, res) => {
     }
     ///hada mb3d nbdloh fih l address ta3 l payment 
     var host = "http://localhost:5001/create/order"
-    var result = await fetch(host,{
+   /*  var result = await fetch(host,{
       method:'Post',
       body: JSON.stringify(paymentBody),
       headers:{"Content-Type":"application/json"}
@@ -195,7 +198,7 @@ const createReservation = async (req, res) => {
     });
     var paymentResult = await result.json();
       console.log('Payment result:', paymentResult);
-
+ */
       await res.json(doc);
 
 
@@ -216,6 +219,7 @@ const createReservation = async (req, res) => {
 
 
 const getReservations = async (req, res) => {
+
   mongoose.connect(process.env.MONGO_URL);
   // const userData = await getUserDataFromReq(req); 
 
