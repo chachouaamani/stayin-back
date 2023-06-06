@@ -13,8 +13,10 @@ var eventBus = require("./Events/eventBus.js");
 
 var controller = require("./controllers/appartementEvent.js");
 var controllerr = require("./controllers/reservation.js");
+const bodyParser = require('body-parser');
 
 var app = express();
+app.use(bodyParser.json());
 //const server = require('http').createServer(app);
 //const io = require('socket.io');
 //const Message = require('./models/Message');
@@ -70,6 +72,8 @@ app.get("/reservation/getAppartementId/:id", controller.getAppartementId);
 app.post("/reservation/createReservation/:id" , controllerr.createReservation);
 //GET ALL 
 app.get("/reservation/getReservations/" , controllerr.getReservations); 
+
+app.patch("/reservation/validate/:reservationId/:token/:PayerId",controllerr.validateReservation);
 
 app.get("/reservation/getUserWithBooking" , controllerr.getBookingsByUser);
 
