@@ -72,7 +72,7 @@ app.post("/reservation/createReservation/:id" , controllerr.createReservation);
 app.get("/reservation/getReservations/" , controllerr.getReservations); 
 
 app.get("/reservation/getUserWithBooking" , controllerr.getBookingsByUser);
-
+app.get("/notification/:userid" , controllerr.getNotificationsByUser);
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;
     const errorMessage = err.message || "Something went wrong";
