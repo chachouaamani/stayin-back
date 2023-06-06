@@ -8,6 +8,7 @@ const RservationSchema = new mongoose.Schema({
   checkOut: {type:Date, required:true},
   name: {type:String, required:true},
   phone: {type:String, required:true},
+  pending:{type:Boolean,default:true},
   price: Number,
   pending:{type:Boolean , default:true},
 },

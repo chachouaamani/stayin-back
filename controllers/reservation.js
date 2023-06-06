@@ -103,7 +103,13 @@ async function isAvailable(appartementId, checkIn, checkOut) {
 
 
 }
+const validateReservation = async(req,res)=>{
+  mongoose.connect(process.env.MONGO_URL);
+  const {reservationId} =req.params;
+  const reservation = res.json(await Reservation.findByIdAndUpdate({ _id: reservationId},{pending:false}));
+console.log(reservation)
 
+}
 const createReservation = async (req, res) => {
   console.log("we are creating reservation")
 
@@ -180,9 +186,34 @@ const createReservation = async (req, res) => {
       )
 
 
-    
+    //send create order
 
-     
+      //hado kaml ytbdlo 
+    //when user click cancel
+    var cancelUrl="http://localhost:3000/";
+    //return when user click pay
+    var returnUrl="http://localhost:3000/";
+
+    var paymentBody = {
+      ReservationId: doc._id,
+      Amount: doc.price,
+      CurrencyCode: "USD",
+      PaymentDate: new Date(),
+      CancelUrl: cancelUrl,
+      ReturnUrl: returnUrl,
+    }
+    ///hada mb3d nbdloh fih l address ta3 l payment 
+    var host = "http://localhost:5001/create/order"
+   /*  var result = await fetch(host,{
+      method:'Post',
+      body: JSON.stringify(paymentBody),
+      headers:{"Content-Type":"application/json"}
+
+    });
+    var paymentResult = await result.json();
+      console.log('Payment result:', paymentResult);
+ */
+      await res.json(doc);
 
 
 
@@ -212,19 +243,10 @@ const getReservations = async (req, res) => {
 
 const getBookingsByUser = async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
+  
+  const {user} = req.params;
 
-  const { user } = req.params.user;
-  console.log(user)
-  res.json(await Reservation.find({ user: user }))
-}
-
-const getNotificationsByUser = async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const user = req.params.userid;
-
-  var not = await Notification.find({ id_user: user })
-
-  res.json(not)
+  res.json( await Reservation.find({user:user}))
 }
 
 const setReservationRead = async (req, res) => {
@@ -236,6 +258,5 @@ const setReservationRead = async (req, res) => {
 
 module.exports.createReservation = createReservation;
 module.exports.getReservations = getReservations;
-module.exports.getBookingsByUser = getBookingsByUser;
-module.exports.getNotificationsByUser = getNotificationsByUser;
-module.exports.setReservationRead = setReservationRead;
+module.exports.getBookingsByUser= getBookingsByUser;
+
