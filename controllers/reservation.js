@@ -230,8 +230,8 @@ const getReservations = async (req, res) => {
 const getBookingsByUser = async(req , res) =>{
   mongoose.connect(process.env.MONGO_URL);
   
-  const {user} = req.params;
-
+  const {user} = req.params.user;
+  console.log(user)
   res.json( await Reservation.find({user:user}))
 }
 
