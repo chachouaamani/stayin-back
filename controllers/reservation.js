@@ -153,13 +153,13 @@ const createReservation = async (req, res) => {
 
       // Create notification and store it in the database
 
-      const notif= await Notification.create({
-        id_reservation: doc._id ,
-        id_user:   user,
+      const notif = await Notification.create({
+        id_reservation: doc._id,
+        id_user: user,
         message: "New reservation created: " + result.title,
-        not_read:  true,
+        not_read: true,
       })
-      
+
       eventBus.Publish(
         new events.ReservationCreatedEvent(
           NewGUID(),
@@ -243,17 +243,24 @@ const getBookingsByUser = async (req, res) => {
   res.json(await Reservation.find({ user: user }))
 }
 
-const getNotificationsByUser = async (req , res)=>{
+const getNotificationsByUser = async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const user  = req.params.userid;
- 
-  var not =await Notification.find({ id_user:user })
+  const user = req.params.userid;
+
+  var not = await Notification.find({ id_user: user })
 
   res.json(not)
+}
 
+const setReservationRead = async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const id = req.params.id;
+  var not = await Notification.findByIdAndUpdate(id, { not_read: false })
+  res.json(not)
 }
 
 module.exports.createReservation = createReservation;
 module.exports.getReservations = getReservations;
 module.exports.getBookingsByUser = getBookingsByUser;
-module.exports.getNotificationsByUser=getNotificationsByUser;
+module.exports.getNotificationsByUser = getNotificationsByUser;
+module.exports.setReservationRead = setReservationRead;
