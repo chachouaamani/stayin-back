@@ -71,6 +71,7 @@ app.post("/reservation/createReservation/:id" , controllerr.createReservation);
 //GET ALL 
 app.get("/reservation/getReservations/" , controllerr.getReservations); 
 
+app.get("/notification/setread/:id" , controllerr.setReservationRead);
 app.get("/reservation/getUserWithBooking" , controllerr.getBookingsByUser);
 app.get("/notification/:userid" , controllerr.getNotificationsByUser);
 app.use((err, req, res, next) => {
