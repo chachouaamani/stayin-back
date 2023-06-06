@@ -1,4 +1,4 @@
-var express=require("express");
+/* var express=require("express");
 var controller = require("../controllers/user.js");
 //var Reservation=require("../models/Reservation.js")
 
@@ -12,4 +12,4 @@ router.post("/user/login" , controller.login);
 
 router.get('/user/profile',controller.user); 
 //export default router;
-module.exports=router;
+module.exports=router; */

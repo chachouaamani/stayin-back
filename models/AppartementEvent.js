@@ -20,7 +20,7 @@ const eventAppartementSchema = mongoose.Schema({
     price: Number,
     price_month:Number,
     reservedDates:[{
-        type:Date,
+        type: Date,
         default:[]}]
 });
 

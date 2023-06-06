@@ -10,11 +10,15 @@ var appartementEventRoute = require("./routes/appartementEvent.js");
 var appartementEvent = require("./controllers/appartementEvent.js");
 var events = require("./Events/events.js");
 var eventBus = require("./Events/eventBus.js");
+
+var controller = require("./controllers/appartementEvent.js");
+var controllerr = require("./controllers/reservation.js");
+
 var app = express();
 //const server = require('http').createServer(app);
 //const io = require('socket.io');
 //const Message = require('./models/Message');
- server = require('http').createServer(app) 
+// server = require('http').createServer(app) 
  /*
 const io = require('socket.io')(server, { 
   cors: { 
@@ -23,7 +27,7 @@ const io = require('socket.io')(server, {
   } 
 });  */
  
-server.listen(8800)
+//server.listen(8800)
 
 const cors = require("cors");
 
@@ -48,19 +52,26 @@ mongoose.connection.on("disconnected", () => {
 
 //middlewares
 
-/* app.use(cors({
+ app.use(cors({
     credentials: true,
     origin: 'http://localhost:3000',
     CORS: "AllowAll",
 }));
- */
+
 app.use(express.json())
 app.use(cookieParser());
 
-app.use("/ms-reservation", reservationRoute);
-app.use("/", userRoute);
-app.use("/", appartementRoute);
-app.use("/", appartementEventRoute);
+/* app.use("", reservationRoute);
+app.use("", userRoute);
+app.use("", appartementRoute);
+app.use("", appartementEventRoute); */
+app.get("/reservation/getAppartementId/:id", controller.getAppartementId);
+//CREATE     
+app.post("/reservation/createReservation/:id" , controllerr.createReservation);
+//GET ALL 
+app.get("/reservation/getReservations/" , controllerr.getReservations); 
+
+app.get("/reservation/getUserWithBooking" , controller.getBookingsByUser);
 
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;
@@ -91,7 +102,7 @@ async function ReadNewEvents() {
 
 setInterval(ReadNewEvents, 5000);
 
-/* app.listen(8800, () => {
+ app.listen(8800, () => {
     connect()
     console.log("connected to backend")
-}) */
+}) 

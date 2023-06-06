@@ -84,7 +84,7 @@ function isInArray(array, value) {
 
 async function isAvailable(appartementId, checkIn, checkOut) {
   var reservedDates = await getReservedDates(appartementId);
-  // console.log(reservedDates)
+   console.log(reservedDates)
   var checkIn = new Date(checkIn);
   var checkOut = new Date(checkOut);
 
@@ -105,16 +105,16 @@ async function isAvailable(appartementId, checkIn, checkOut) {
 
 const createReservation = async (req, res) => {
   console.log("we are creating reservation")
-   return
+   
   mongoose.connect(process.env.MONGO_URL);
   const {id} = req.params;
-  console.log(reservedDates)
+ // console.log(reservedDates)
   const {   checkIn, checkOut, numberOfGuests, name, phone,email, price, user, reserved } = req.body;
  
   if (await isAvailable(id, checkIn, checkOut)) {
     
      var reservedDates = await getReservedDates(id);
-     console.log(reservedDates)
+    // console.log(reservedDates)
      const checkInn = new Date(Date.parse(checkIn));
      const checkOutt = new Date(Date.parse(checkOut));
 
@@ -136,7 +136,7 @@ const createReservation = async (req, res) => {
 
       console.log('appartement réservée', result);
 
-      io.on('connection', (socket) => { 
+     /*  io.on('connection', (socket) => { 
         console.log("socket id: " + socket.id); 
        
         const specificClient = user; // Replace with the specific client's socket ID
@@ -146,7 +146,7 @@ const createReservation = async (req, res) => {
           console.log('A user disconnected'); 
         }); 
         });
-       
+        */
       
     
 
@@ -225,11 +225,17 @@ const getReservations = async (req, res) => {
 };
 
   
+const getBookingsByUser = async(req , res) =>{
+  mongoose.connect(process.env.MONGO_URL);
+  
+  const {user} = req.params;
 
+  res.json( await Reservation.find({user:user}))
+}
 
 
 
 module.exports.createReservation = createReservation;
 module.exports.getReservations = getReservations;
-
+module.exports.getBookingsByUser= getBookingsByUser;
 
