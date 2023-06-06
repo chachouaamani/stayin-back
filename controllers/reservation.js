@@ -180,34 +180,9 @@ const createReservation = async (req, res) => {
       )
 
 
-      //send create order
+    
 
-      //hado kaml ytbdlo 
-      //when user click cancel
-      var cancelUrl = "http://localhost:3000/";
-      //return when user click pay
-      var returnUrl = "http://localhost:3000/";
-
-      var paymentBody = {
-        ReservationId: doc._id,
-        Amount: doc.price,
-        CurrencyCode: "USD",
-        PaymentDate: new Date(),
-        CancelUrl: cancelUrl,
-        ReturnUrl: returnUrl,
-      }
-      ///hada mb3d nbdloh fih l address ta3 l payment 
-      var host = "http://localhost:5001/create/order"
-      /*  var result = await fetch(host,{
-         method:'Post',
-         body: JSON.stringify(paymentBody),
-         headers:{"Content-Type":"application/json"}
-   
-       });
-       var paymentResult = await result.json();
-         console.log('Payment result:', paymentResult);
-    */
-      await res.json(doc);
+     
 
 
 
