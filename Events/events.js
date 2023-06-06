@@ -86,7 +86,7 @@ class ReservationCreatedEvent extends BaseEvent{
         if (IsEmpty(checkIn))
             throw Error("ERROR: Empty field");
 
-         if (IsEmpty(checkOut))
+        if (IsEmpty(checkOut))
             throw Error("ERROR: Empty field");
        this._id=_id;
        this.appartement=appartement;

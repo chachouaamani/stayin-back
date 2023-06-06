@@ -5,6 +5,8 @@ var events = require("../Events/events.js");
 const jwt = require('jsonwebtoken');
 var mongoose = require("mongoose");
 const db=require("../Events/database.js")
+const fetch = require('node-fetch');
+
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 const AppartementEvent = require("../models/AppartementEvent.js");
 const notifier = require('node-notifier');
@@ -180,7 +182,7 @@ const createReservation = async (req, res) => {
 
     var paymentBody = {
       ReservationId: doc._id,
-      Amount: price,
+      Amount: doc.price,
       CurrencyCode: "USD",
       PaymentDate: new Date(),
       CancelUrl: cancelUrl,
