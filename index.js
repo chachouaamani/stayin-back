@@ -72,9 +72,10 @@ app.get("/reservation/getAppartementId/:id", controller.getAppartementId);
 app.post("/reservation/createReservation/:id" , controllerr.createReservation);
 //GET ALL 
 app.get("/reservation/getReservations/" , controllerr.getReservations); 
+app.patch("reservation/validate/:ReservationId/:token/:PayerID",controllerr.validateReservation)
 
 app.get("/reservation/getUserWithBooking" , controllerr.getBookingsByUser);
-app.get("/notification/:userid" , controllerr.getNotificationsByUser);
+// app.get("/notification/:userid" , controllerr.getNotificationsByUser);
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;
     const errorMessage = err.message || "Something went wrong";

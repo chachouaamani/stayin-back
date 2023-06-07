@@ -105,8 +105,8 @@ async function isAvailable(appartementId, checkIn, checkOut) {
 }
 const validateReservation = async(req,res)=>{
   mongoose.connect(process.env.MONGO_URL);
-  const {reservationId} =req.params;
-  const reservation = res.json(await Reservation.findByIdAndUpdate({ _id: reservationId},{pending:false}));
+  const {reservationId} =req.params.ReservationId;
+  const reservation =await Reservation.findByIdAndUpdate(reservationId,{pending:false});
 console.log(reservation)
 
 }
@@ -259,4 +259,5 @@ const setReservationRead = async (req, res) => {
 module.exports.createReservation = createReservation;
 module.exports.getReservations = getReservations;
 module.exports.getBookingsByUser= getBookingsByUser;
+module.exports.validateReservation=validateReservation;
 
