@@ -161,7 +161,7 @@ const createReservation = async (req, res) => {
 
       const notif = await Notification.create({
         id_reservation: doc._id,
-        id_user: user,
+        id_user: result.owner,
         message: "New reservation created: " + result.title,
         not_read: true,
       })
