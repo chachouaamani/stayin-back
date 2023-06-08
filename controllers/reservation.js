@@ -58,7 +58,7 @@ function getUserDataFromReq(req) {
 async function getReservedDates(appartementId) {
 
   try {
-    const appartement = await AppartementEvent.findOne({ idAppartement: appartementId });
+    const appartement = AppartementEvent.findOne({ idAppartement: appartementId });
     //const appartement = await AppartementEvent.findById(appartementId);
 
     var reservedDates = appartement.reservedDates;
@@ -103,13 +103,31 @@ async function isAvailable(appartementId, checkIn, checkOut) {
 
 
 }
+async function getReservedDates(appartementId) {
+  try {
+    const appartement = await AppartementEvent.findOne({ idAppartement: appartementId });
+    if (appartement) {
+      return appartement.reservedDates;
+    } else {
+      console.error('Appartement not found');
+      return [];
+    }
+  } catch (err) {
+    console.error('An error occurred while searching for the appartement:', err);
+    return [];
+  }
+}
+
 const validateReservation = async(req,res)=>{
+  console.log("working")
   mongoose.connect(process.env.MONGO_URL);
   const {reservationId} =req.params.ReservationId;
   const reservation =await Reservation.findByIdAndUpdate(reservationId,{pending:false});
 console.log(reservation)
+res.json(reservation);
 
 }
+
 const createReservation = async (req, res) => {
   console.log("we are creating reservation")
 
@@ -213,7 +231,7 @@ const createReservation = async (req, res) => {
     var paymentResult = await result.json();
       console.log('Payment result:', paymentResult);
  */
-      await res.json(doc);
+      // await res.json(doc);
 
 
 
