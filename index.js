@@ -72,6 +72,11 @@ app.get("/reservation/getAppartementId/:id", controller.getAppartementId);
 app.post("/reservation/createReservation/:id" , controllerr.createReservation);
 //GET ALL 
 app.get("/reservation/getReservations/" , controllerr.getReservations); 
+app.get("/notification/setread/:id" , controllerr.setReservationRead);
+app.get("/reservation/getBookingsByUser/:user" , controllerr.getBookingsByUser);
+app.get("/notification/:userid" , controllerr.getNotificationsByUser);
+
+
 
 // app.patch("/reservation/validate/:ReservationId/:token/:PayerID", controllerr.validateReservation)
 
@@ -149,7 +154,7 @@ async function ReadNewEvents() {
         db.InsertUser(message.body); */
         if(message.Type == "AppartementCreatedEvent")
         await appartementEvent.InsertEventAppartement(message.body); 
-      
+       console.log(message.body)
     }
 }
 

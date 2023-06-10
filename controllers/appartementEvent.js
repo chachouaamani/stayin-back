@@ -1,12 +1,12 @@
 var mongoose = require("mongoose");
 const EventAppartement = require("../models/AppartementEvent.js")
 
-const getAppartementId = async (req, res) => {
+ const getAppartementId = async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { id } = req.params;
   console.log({ id });
   res.json(await EventAppartement.findOne({ idAppartement: id }))
-}
+} 
 
 module.exports.getAppartementId = getAppartementId;
 
