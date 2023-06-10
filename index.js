@@ -93,7 +93,7 @@ app.get('/reservation/validate/', async (req, res) => {
     await reservation.save();
     
 
-    return res.redirect("http://localhost:5050")
+    return res.redirect("http://localhost:5050/account/bookings/"+reservationId)
   } catch (error) {
     // console.log('Error updating reservation:', error);
     return res.status(500).json({ error: 'Something went wrong' });
