@@ -72,9 +72,11 @@ app.get("/reservation/getAppartementId/:id", controller.getAppartementId);
 app.post("/reservation/createReservation/:id" , controllerr.createReservation);
 //GET ALL 
 app.get("/reservation/getReservations/" , controllerr.getReservations); 
-
-app.get("/reservation/getUserWithBooking" , controllerr.getBookingsByUser);
+app.get("/notification/setread/:id" , controllerr.setReservationRead);
+app.get("/reservation/getBookingsByUser/:user" , controllerr.getBookingsByUser);
 app.get("/notification/:userid" , controllerr.getNotificationsByUser);
+
+
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;
     const errorMessage = err.message || "Something went wrong";
@@ -97,7 +99,7 @@ async function ReadNewEvents() {
         db.InsertUser(message.body); */
         if(message.Type == "AppartementCreatedEvent")
         await appartementEvent.InsertEventAppartement(message.body); 
-      
+       console.log(message.body)
     }
 }
 

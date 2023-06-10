@@ -40,21 +40,7 @@ function getUserDataFromReq(req) {
     });
   });
 }
-/*
- function getReservedDates(appartementId){
-  Appartement.findById(appartementId)
-  .then(appartement => {
-    
-    let reservedDates = appartement.reservedDates;
-   // console.log(reservedDates);
-    
-  })
-  .catch(err => {
-    console.error('Une erreur s\'est produite lors de la recherche de l\'appartement :', err);
-  });
- 
-  return ("aaaa"+reservedDates);
-} */
+
 async function getReservedDates(appartementId) {
 
   try {
@@ -213,7 +199,7 @@ const createReservation = async (req, res) => {
     var paymentResult = await result.json();
       console.log('Payment result:', paymentResult);
  */
-      await res.json(doc);
+    
 
 
 
@@ -244,10 +230,35 @@ const getReservations = async (req, res) => {
 const getBookingsByUser = async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   
-  const {user} = req.params;
-
-  res.json( await Reservation.find({user:user}))
+  const user = req.params.user;
+  const bookings = await Reservation.aggregate([
+    {
+      $match: { user: user }
+    },
+    {
+      $lookup: {
+        from: 'eventappartements',
+        localField: 'id',
+        foreignField: 'idAppartement',
+        as: 'appartement'
+      }
+    }
+  ]);
+  console.log(bookings)
+  res.json(bookings)
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 const setReservationRead = async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
@@ -256,7 +267,27 @@ const setReservationRead = async (req, res) => {
   res.json(not)
 }
 
+const getNotificationsByUser = async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const user = req.params.userid;
+
+  var not = await Notification.find({ id_user: user })
+
+  res.json(not)
+
+}
+/* const getAppartementByBooking = async(req , res)=>{
+  mongoose.connect(process.env.MONGO_URL);
+  const idAppartement = req.params.idAppartement;
+
+  var result = await AppartementEvent.findOne({id:idAppartement})
+  res.json(result)
+}
+ */
+module.exports.setReservationRead=setReservationRead;
+module.exports.getNotificationsByUser = getNotificationsByUser;
 module.exports.createReservation = createReservation;
 module.exports.getReservations = getReservations;
 module.exports.getBookingsByUser= getBookingsByUser;
+//module.exports.getgetAppartementByBooking= getAppartementByBooking;
 

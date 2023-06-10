@@ -2,7 +2,7 @@ var mongoose=require("mongoose");
 //const {Schema} = mongoose;
 
 const RservationSchema = new mongoose.Schema({
-  id: {type:mongoose.Schema.Types.ObjectId, required:true, ref:'Appartement'},
+  id: {type:mongoose.Schema.Types.ObjectId, required:true, ref:'EventAppartement'  },
   user: {type:String},
   checkIn: {type:Date, required:true},
   checkOut: {type:Date, required:true},
