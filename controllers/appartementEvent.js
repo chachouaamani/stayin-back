@@ -25,7 +25,7 @@ async function InsertEventAppartement(Event) {
     description: Event.description,
     perks: Event.perks,
     extraInfo: Event.extraInfo,
-    checkIn: Event.checkIn,
+    nbBeds: Event.nbBeds,
     checkOut: Event.checkOut,
     maxGuests: Event.maxGuests,
     price: Event.price,

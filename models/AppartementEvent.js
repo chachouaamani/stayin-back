@@ -11,7 +11,7 @@ const eventAppartementSchema = mongoose.Schema({
     description: String,
     perks: [String],
     extraInfo: String,
-    checkIn: Number,
+    nbBeds: Number,
     checkOut: Number,
     maxGuests: Number,
     price: Number,

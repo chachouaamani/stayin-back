@@ -1,6 +1,7 @@
 
 const mongoose= require("mongoose");
-const connectionString = "mongodb+srv://amani_ch:amani217@cluster0.jje24xc.mongodb.net/ms-reservation";
+require('dotenv').config();
+const connectionString = process.env.MONGO_URL
 const eventTableName = "events"
 
 const eventSchema = mongoose.Schema({
